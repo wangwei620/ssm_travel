@@ -1,0 +1,115 @@
+<!-- 头部 start -->
+    <header id="header">
+        <div class="top_banner">
+            <img src="images/top_banner.jpg" alt="">
+        </div>
+        <div class="shortcut">
+            <!-- 未登录状态  -->
+            <!--<div class="login_out">
+                <a href="login.html">登录</a>
+                <a href="register.html">注册</a>
+            </div>-->
+           <!-- &lt;!&ndash; 登录状态  &ndash;&gt;-->
+           <!-- <div class="login">
+                <span>欢迎回来，admin</span>
+                <a href="myfavorite.html" class="collection">我的收藏</a>
+                <a href="javascript:;">退出</a>
+            </div>-->
+        </div>
+        <div class="header_wrap">
+            <div class="topbar">
+                <div class="logo">
+                    <a href="/"><img src="images/logo.jpg" alt=""></a>
+                </div>
+                <div class="search">
+                    <input name="rname" type="text" placeholder="请输入路线名称" class="search_input" autocomplete="off">
+                    <a href="javascript:void(0);" id="btn" class="search-button">搜索</a>
+                </div>
+                <script>
+                    $(".search-button").click(function () {
+                        //获取输入框的值
+                     var rname =  $("input[name='rname']").val();
+                     //提交到route_list.html页面
+                        location.href = "route_list.html?rname="+rname+"&pageNumber=1";
+                    })
+                </script>
+                <div class="hottel">
+                    <div class="hot_pic">
+                        <img src="images/hot_tel.jpg" alt="">
+                    </div>
+                    <div class="hot_tel">
+                        <p class="hot_time">客服热线(9:00-6:00)</p>
+                        <p class="hot_num">400-618-9090</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- 头部 end -->
+     <!-- 首页导航 -->
+    <div class="navitem">
+        <ul class="nav">
+            <!--<li class="nav-active"><a href="index.html">首页</a></li>
+            <li><a href="route_list.html">门票</a></li>
+            <li><a href="route_list.html">酒店</a></li>
+            <li><a href="route_list.html">香港车票</a></li>
+            <li><a href="route_list.html">出境游</a></li>
+            <li><a href="route_list.html">国内游</a></li>
+            <li><a href="route_list.html">港澳游</a></li>
+            <li><a href="route_list.html">抱团定制</a></li>
+            <li><a href="route_list.html">全球自由行</a></li>
+            <li><a href="favoriterank.html">收藏排行榜</a></li>-->
+        </ul>
+    </div>
+<script>
+    //这个导航栏的的ajax请求
+    $(function () {
+       // alert("你好");
+        //发送ajax信息,请求分类信息
+        var url  = "category";
+        var params = {"action":"queryAll"};
+        $.post(url,params,function (data) {
+            //alert(data);
+            //我们可以拿到数据库的信息
+           if (data.flag){
+                //拿到数据
+               var category = data.data;
+               //将json字符串转化为可执行的js代码
+               var cateArr = eval(category);
+               //循环遍历这个js的字符串
+               //得到这个字符后我们就进行执行拼接字符串向导航条中追加
+               var navStr = "<li class=\"nav-active\"><a href=\"index.html\">首页</a></li>";
+               for(var i=0;i<cateArr.length;i++){
+                   //alert(cateArr[i].cid+":"+cateArr[i].cname);
+                   navStr+="<li><a href=\"route_list.html?pageNumber=1&cid="+cateArr[i].cid+"\">"+cateArr[i].cname+"</a></li>";
+               }
+               navStr+="<li><a href=\"favoriterank.html?pageNumber=1\">收藏排行榜</a></li>";
+               //追加到nav中
+               $(".nav").html(navStr);
+           }else{
+               alert(data.errorMsg);
+           }
+        },"json");
+    });
+    //alert("你好")
+    //页面加载成功后通过ajax向服务器发送请求
+    //加载用户登录状态
+    var url = "user";
+    var params = {"action":"getUserInfo"};
+    $.post(url,params,function (data) {
+        //alert("你好")
+        if (data.flag){
+            $(".shortcut").html("<div class=\"login\">\n" +
+                "                <span>欢迎回来，"+data.data.username+"</span>\n" +
+                "                <a href=\"myfavorite.html?pageNumber=1\" class=\"collection\">我的收藏</a>\n" +
+                "                <a href=\"user?action=logout\">退出</a>\n" +
+                "            </div>");
+        }else{
+            $(".shortcut").html("<div class=\"login_out\">\n" +
+                "                <a href=\"login.html\">登录</a>\n" +
+                "                <a href=\"register.html\">注册</a>");
+        }
+    },"json");
+
+</script>
+    
